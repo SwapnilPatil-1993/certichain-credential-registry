@@ -1,119 +1,112 @@
-# CertiChain
+# CertiChain — Blockchain-Based Certificate Verification
 
-### A privacy-aware credential registry with an on-chain audit trail.
+**Project type:** Blockchain mini project / EVM DApp prototype  
+**Core idea:** Issue, verify, and revoke academic credential fingerprints while keeping certificate files and personal information off-chain.
 
-CertiChain is an EVM prototype for issuing and checking digital credential fingerprints. Issuers register a SHA-256 digest on-chain; verifiers hash a supplied file locally and query the registry. The document and personal information stay off-chain.
+## 1. Introduction
+CertiChain demonstrates how a smart contract and cryptographic hashing can support integrity checks for digital certificates. A browser calculates a SHA-256 digest of a selected file. The contract stores the digest with issuer and status metadata; a verifier calculates the digest again and queries the registry.
 
-> **Status:** local prototype. No public deployment, production users, or security audit is claimed. The transcript in the report is illustrative; capture your own local-chain evidence before presenting a live deployment.
+## 2. Problem Statement
+Manual certificate verification can be slow and can depend on contacting the issuing institution. A document that has been changed may be difficult to detect if there is no trusted reference fingerprint.
 
-## Product walkthrough
+## 3. Objectives
+- Register a unique certificate fingerprint through an authorized issuer.
+- Verify whether a fingerprint exists and whether its record is valid or revoked.
+- Allow the issuer or contract owner to revoke a record without deleting its history.
+- Keep certificate files and personal details off-chain.
+- Demonstrate wallet-signed transactions, smart-contract access control, and read-only verification.
 
-- Connect an injected EVM wallet and see the active network.
-- Hash a credential file in the browser. The file is never uploaded by this interface.
-- Check whether its fingerprint exists and whether the record is valid or revoked.
-- Issue a fingerprint from an authorized issuer wallet; revoke from the issuer or registry owner.
-- Save a registry address in this browser. The wallet handles transaction signing.
+## 4. Blockchain Platform and Tools
+- **Solidity 0.8.x:** smart-contract language.
+- **EVM-compatible environment:** executes the contract.
+- **Remix IDE:** compile and deploy for the local demonstration.
+- **Remix VM or Ganache:** local development chain; this project does not claim a public-mainnet deployment.
+- **ethers.js v6:** browser-to-wallet and browser-to-contract interaction.
+- **Browser Web Crypto API:** SHA-256 file fingerprinting.
+- **GitHub:** source-code and documentation repository.
 
-Issuer permissions are administered by the contract owner through `setIssuerAuthorization` in Remix or another contract console. The UI does not expose a public admin panel.
-
-## Architecture
+## 5. System Architecture
 
 ```mermaid
 flowchart LR
-    F[Credential file] -->|SHA-256 in browser| H[bytes32 fingerprint]
-    H -->|signed issue / revoke| C[CertiChain.sol]
-    W[Issuer wallet] -->|authorized transaction| C
-    H -->|read-only verification| C
-    C -->|exists, valid, issuer, timestamp| V[Verifier UI]
+    F[Credential file in browser] --> H[SHA-256 fingerprint]
+    H -->|issue transaction| C[CertiChain smart contract]
+    W[Authorized wallet] -->|signs transaction| C
+    H -->|read-only query| C
+    C --> R[Exists / valid / issuer / timestamp]
+    R --> V[Verifier interface]
 ```
 
-**On-chain:** fingerprint, issuer address, issuance timestamp, revocation state, and issuer authorization.  
-**Off-chain:** credential file, recipient identity, event details, and personal information.
+**Stored on-chain:** fingerprint, issuer address, issuance timestamp, revocation status, and issuer authorization.  
+**Kept off-chain:** original document, recipient identity, student ID, and personal information.
 
-Ethereum mainnet uses proof-of-stake validators to agree on canonical blocks and state. Remix VM and Ganache are development environments for executing EVM transactions; they do not demonstrate mainnet validator consensus.
+Ethereum mainnet uses proof-of-stake validators to agree on canonical chain state. A Remix VM/Ganache demo is a local development environment and does not itself demonstrate mainnet consensus.
 
-## Project structure
+## 6. Smart Contract Design
+Source: [`contracts/CertiChain.sol`](contracts/CertiChain.sol)
 
-```text
-CertiChain/
-├── app/
-│   ├── index.html       # Wallet-connected browser interface
-│   ├── app.js           # File hashing and contract interactions (ethers v6)
-│   └── styles.css       # Responsive UI
-├── contracts/
-│   └── CertiChain.sol   # Issuer-gated credential registry
-├── scripts/
-│   └── hash_certificate.py
-├── docs/
-│   └── Project_Report.pdf
-└── build_report.py
-```
-
-## Run locally
-
-### Deploy the contract
-
-1. Open [Remix IDE](https://remix.ethereum.org/).
-2. Create a file from `contracts/CertiChain.sol` and compile with Solidity `0.8.24` or a compatible `0.8.x` compiler.
-3. Select **Remix VM** in Deploy & Run, then deploy. The deploying account is the owner and initial authorized issuer.
-4. Copy the deployed contract address. For a persistent development chain, use Ganache and connect Remix to its RPC provider.
-
-### Launch the interface
-
-From the repository root:
-
-```bash
-cd app
-python -m http.server 8000
-```
-
-Open `http://localhost:8000`, connect the wallet to the deployment network, then save the contract address under **Developer Configuration**. The interface loads ethers.js 6.17.0 from jsDelivr; an internet connection is needed for the library and optional web fonts.
-
-### Demonstrate the flow
-
-1. Create a non-sensitive sample file and choose it in **Check a credential**.
-2. Verify before issuance; the interface should report no record.
-3. As the deployer or an authorized issuer, issue the fingerprint and confirm the transaction in the wallet.
-4. Verify the same file again; the result shows its status, issuer, and issue time.
-5. Revoke the record as the issuer or owner, then verify again.
-6. Connect an unauthorized wallet and confirm issuance is unavailable or rejected by the contract.
-
-The optional CLI helper prints a 32-byte SHA-256 fingerprint:
-
-```powershell
-python scripts/hash_certificate.py path\to\sample-certificate.txt
-```
-
-## Contract surface
-
-| Method | Access | Behavior |
+| Function | Access | Purpose |
 |---|---|---|
-| `setIssuerAuthorization(address,bool)` | Owner | Grant or remove issuer permission |
-| `issueCertificate(bytes32)` | Authorized issuer | Record a unique fingerprint and emit `CertificateIssued` |
-| `revokeCertificate(bytes32)` | Issuer or owner | Revoke an existing record and emit `CertificateRevoked` |
+| `setIssuerAuthorization(address,bool)` | Owner only | Authorize or remove an issuer |
+| `issueCertificate(bytes32)` | Authorized issuer | Store a unique non-zero fingerprint and emit an event |
+| `revokeCertificate(bytes32)` | Original issuer or owner | Mark an existing record revoked; retain record history |
 | `verifyCertificate(bytes32)` | Public read | Return existence, validity, issuer, and issue timestamp |
 
-Revocation preserves the original record and event history. Duplicate issuance and unknown-record revocation revert.
+The deployer becomes the owner and the initial authorized issuer. Duplicate issuance, zero fingerprints, unauthorized issuance, unknown-record revocation, and repeated revocation are rejected by contract checks.
 
-## Security and privacy
+## 7. Setup and Execution
+1. Open [Remix IDE](https://remix.ethereum.org/).
+2. Copy `contracts/CertiChain.sol` into Remix and compile using Solidity 0.8.24 or a compatible 0.8.x compiler.
+3. Select **Remix VM** in Deploy & Run and deploy the contract. Save the deployed address.
+4. From the repository root, run the interface:
+   ```bash
+   cd app
+   python -m http.server 8000
+   ```
+5. Open `http://localhost:8000`, connect the injected EVM wallet to the same network used for deployment, and enter/save the contract address in Developer Configuration.
+6. Use a non-sensitive sample file for the demo. Verify it before issuing, issue it from the authorized account, verify it again, revoke it, and verify the revoked status.
+7. Test issuer authorization with an unauthorized wallet/account.
 
-- Never write certificate files, names, student IDs, or sensitive metadata to a public chain.
-- A digest match proves file equality relative to a registered fingerprint; it does not prove the issuer's claim is true.
-- File canonicalization matters: metadata or encoding changes produce a different digest.
-- The owner is a governance trust point and can authorize issuers or revoke any record. A compromised owner key can undermine issuer controls.
-- This prototype has not been audited. Do not use it for consequential credentials without a threat model, key-management plan, independent review, and privacy/legal review.
-- Do not put a private key or seed phrase in the app or repository. Wallet transactions are signed by the injected wallet.
+**Deployment status:** local deployment instructions are provided. No public-chain address, explorer link, or completed live transaction is claimed in this repository.
 
-## Limitations and next steps
+## 8. Test Plan and Expected Results
+Run these tests yourself on the local chain and record the actual result and transaction details. These are expected outcomes, not a claim that the tests have already been executed.
 
-- No public/testnet contract address or explorer transaction is configured. Supply the address after deploying locally.
-- The wallet must be connected to the same network where the contract is deployed.
-- A production rollout should add multi-signature administration, issuer-key rotation, standardized credential canonicalization, independent contract audits, and deployment verification.
-- Add real screenshots and verified deployment metadata only after those steps are complete.
+| Test | Action | Expected result |
+|---|---|---|
+| Unknown fingerprint | Verify before issuance | No registered record |
+| Issue fingerprint | Authorized issuer calls issue | Transaction succeeds; event emitted |
+| Verify issued record | Query the same fingerprint | Exists = true; valid = true |
+| Duplicate issuance | Issue the same fingerprint again | Transaction reverts |
+| Revoke record | Issuer or owner revokes it | Transaction succeeds; event emitted |
+| Verify revoked record | Query after revocation | Exists = true; valid = false |
+| Unauthorized issuance | Unapproved account issues | Transaction reverts |
+| Privacy check | Inspect app flow | File is hashed in browser, not uploaded by this interface |
 
-## Portfolio materials
+## 9. Screenshots and Outputs — To Capture During Your Run
+Add genuine screenshots to `docs/screenshots/` after executing the steps above:
+1. `01-remix-compile.png` — successful contract compilation.
+2. `02-contract-deployed.png` — deployed contract and address in Remix.
+3. `03-issue-transaction.png` — successful issue transaction.
+4. `04-verify-valid.png` — verification of an issued credential.
+5. `05-revoke-transaction.png` — successful revoke transaction.
+6. `06-verify-revoked.png` — verification after revocation.
+7. `07-unauthorized-test.png` — rejected unauthorized action, if captured.
 
-- [Technical project report](docs/Project_Report.pdf)
-- [Smart contract source](contracts/CertiChain.sol)
-- [Browser interface](app/index.html)
+Do not use mock images as evidence of execution. Add the local contract address, network name, and transaction hashes to the report only after confirming them in your own run.
 
+## 10. Conclusion
+CertiChain is an educational prototype showing how smart contracts, wallet authorization, hashing, and blockchain records can support certificate fingerprint verification. It demonstrates a practical DApp workflow while keeping the certificate itself off-chain.
+
+## 11. Future Scope
+Possible improvements include multi-signature ownership, issuer key rotation, standardized document canonicalization, automated contract tests, independent security review, and a carefully reviewed testnet deployment.
+
+## Security and Privacy Notes
+A hash match confirms that the file matches a registered fingerprint; it does not independently prove the certificate issuer's claim is truthful. Do not store student names, IDs, certificate files, private keys, or seed phrases on-chain or in this repository. This prototype has not been independently audited and is not intended for consequential production use.
+
+## Repository Contents
+- [Smart contract](contracts/CertiChain.sol)
+- [Browser app](app/index.html)
+- [Existing project report](docs/Project_Report.pdf)
+
+**Repository:** https://github.com/SwapnilPatil-1993/certichain-credential-registry
