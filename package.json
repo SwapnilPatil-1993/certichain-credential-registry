@@ -1,0 +1,14 @@
+{
+  "name": "certichain-credential-registry",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Blockchain-based credential fingerprint registry mini project",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.17"
+  }
+}
