@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760">
+  <rect width="1200" height="760" fill="#f4f7fb"/>
+  <rect x="48" y="42" width="1104" height="676" rx="24" fill="#ffffff" stroke="#d8e0ea" stroke-width="2"/>
+  <rect x="48" y="42" width="1104" height="112" rx="24" fill="#172554"/>
+  <rect x="48" y="126" width="1104" height="28" fill="#172554"/>
+  <text x="88" y="91" font-family="Arial, sans-serif" font-size="34" font-weight="700" fill="#ffffff">CertiChain — Automated Test Results</text>
+  <text x="88" y="125" font-family="Arial, sans-serif" font-size="17" fill="#dbeafe">GitHub Actions • workflow run #3 • main branch</text>
+  <rect x="88" y="190" width="1024" height="94" rx="16" fill="#ecfdf5" stroke="#86efac" stroke-width="2"/>
+  <circle cx="132" cy="237" r="22" fill="#16a34a"/>
+  <path d="M121 237 l8 8 15 -17" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="174" y="231" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#166534">SUCCESS</text>
+  <text x="174" y="260" font-family="Arial, sans-serif" font-size="18" fill="#166534">Workflow completed successfully on GitHub Actions</text>
+  <text x="88" y="336" font-family="Arial, sans-serif" font-size="23" font-weight="700" fill="#0f172a">Verified workflow steps</text>
+  <rect x="88" y="360" width="1024" height="48" rx="10" fill="#f8fafc" stroke="#e2e8f0"/><text x="112" y="390" font-family="Arial, sans-serif" font-size="20" fill="#1e293b">Set up Node.js</text><circle cx="1070" cy="384" r="13" fill="#16a34a"/><path d="M1064 384 l5 5 8 -10" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="88" y="424" width="1024" height="48" rx="10" fill="#f8fafc" stroke="#e2e8f0"/><text x="112" y="454" font-family="Arial, sans-serif" font-size="20" fill="#1e293b">Install dependencies</text><circle cx="1070" cy="448" r="13" fill="#16a34a"/><path d="M1064 448 l5 5 8 -10" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="88" y="488" width="1024" height="48" rx="10" fill="#f8fafc" stroke="#e2e8f0"/><text x="112" y="518" font-family="Arial, sans-serif" font-size="20" fill="#1e293b">Compile smart contract</text><circle cx="1070" cy="512" r="13" fill="#16a34a"/><path d="M1064 512 l5 5 8 -10" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="88" y="552" width="1024" height="48" rx="10" fill="#f8fafc" stroke="#e2e8f0"/><text x="112" y="582" font-family="Arial, sans-serif" font-size="20" fill="#1e293b">Run contract tests</text><circle cx="1070" cy="576" r="13" fill="#16a34a"/><path d="M1064 576 l5 5 8 -10" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="88" y="664" font-family="Arial, sans-serif" font-size="16" fill="#475569">Source: GitHub Actions run e1890934b1a840e6d4db0e7af1f507fcbcf9f9f5</text>
+  <text x="88" y="690" font-family="Arial, sans-serif" font-size="14" fill="#64748b">Generated summary of the real workflow result; this is not a raw GitHub screenshot.</text>
+</svg>
