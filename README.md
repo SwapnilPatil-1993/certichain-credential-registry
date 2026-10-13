@@ -96,7 +96,16 @@ Run these tests yourself on the local chain and record the actual result and tra
 | Unauthorized issuance | Unapproved account issues | Transaction reverts |
 | Privacy check | Inspect app flow | File is hashed in browser, not uploaded by this interface |
 
-## 10. Screenshots and Outputs — To Capture During Your Run
+## 10. Screenshots and Outputs
+
+### Automated test output
+The GitHub Actions run completed successfully: Node.js setup, dependency installation, contract compilation, and automated tests all reported success. See the [actual workflow run](https://github.com/SwapnilPatil-1993/certichain-credential-registry/actions/runs/38369418741) and the [test-result summary image](docs/screenshots/ci-test-summary.svg).
+
+![CertiChain automated test summary](docs/screenshots/ci-test-summary.svg)
+
+The SVG is a summary graphic based on the real workflow result; it is not a raw screenshot of the GitHub UI.
+
+### Local contract demo screenshots — still to capture
 Add genuine screenshots to `docs/screenshots/` after executing the steps above:
 1. `01-remix-compile.png` — successful contract compilation.
 2. `02-contract-deployed.png` — deployed contract and address in Remix.
