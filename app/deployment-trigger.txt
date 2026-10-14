@@ -1,0 +1,2 @@
+CertiChain GitHub Pages deployment trigger.
+The web interface is a prototype. A public website deployment does not mean the smart contract has been deployed to a blockchain.
