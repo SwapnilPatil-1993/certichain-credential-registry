@@ -1,0 +1,2 @@
+CertiChain web interface deployment trigger.
+This file exists to trigger the configured GitHub Pages workflow. It does not indicate that the blockchain smart contract is deployed.
